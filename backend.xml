@@ -1,0 +1,544 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.env.example
+.gitignore
+biome.json
+package.json
+README.md
+src/app.ts
+src/enums/auth-type.enum.ts
+src/models/auth.model.ts
+src/plugins/db.ts
+src/routes/auth.ts
+src/routes/root.ts
+test/helper.ts
+test/plugins/support.test.ts
+test/routes/example.test.ts
+test/routes/root.test.ts
+test/tsconfig.json
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".env.example">
+MONGO_URL=mongodb://localhost:27017/fastify-db
+</file>
+
+<file path="biome.json">
+{
+	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+	"vcs": {
+		"enabled": false,
+		"clientKind": "git",
+		"useIgnoreFile": false
+	},
+	"files": {
+		"ignoreUnknown": false
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double"
+		}
+	},
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	}
+}
+</file>
+
+<file path="src/enums/auth-type.enum.ts">
+/**
+ * Representa os diferentes provedores de autenticação disponíveis em uma aplicação.
+ * O uso de um enum com valores de string garante que o código seja claro,
+ * consistente e menos propenso a erros de digitação.
+ */
+export enum AuthProvider {
+  LOCAL = "local",
+  GOOGLE = "google",
+  FACEBOOK = "facebook",
+  GITHUB = "github",
+}
+</file>
+
+<file path="src/models/auth.model.ts">
+import { prop, } from "@typegoose/typegoose";
+import { AuthProvider } from "../enums/auth-type.enum";
+
+export class Auth {
+  @prop({ required: true })
+  _id!: string;
+
+  get id() {
+    return this._id.toString(); // acessa como se fosse 'id'
+  }
+
+  @prop({ required: true })
+  userId!: string;
+
+  @prop({ required: true, enum: AuthProvider })
+  provider!: AuthProvider;
+
+  @prop({ required: true })
+  providerUserId!: string;
+
+  @prop()
+  passwordHash?: string;
+
+  @prop()
+  passwordSalt?: string;
+
+  @prop()
+  passwordUpdatedAt?: Date;
+
+  @prop()
+  refreshTokenHash?: string;
+
+  @prop()
+  refreshTokenExpiresAt?: Date;
+
+  @prop()
+  accessToken?: string;
+
+  @prop()
+  accessTokenExpiresAt?: Date;
+
+  @prop()
+  refreshTokenOAuth?: string;
+
+  @prop()
+  idToken?: string;
+
+  @prop({ required: true })
+  mfaEnabled: boolean;
+
+  @prop()
+  mfaSecret?: string;
+
+  @prop({ type: () => [String] })
+  recoveryCodes?: string[];
+
+  @prop()
+  lastLoginAt?: Date;
+
+  @prop()
+  lastLoginIp?: string;
+
+  @prop({ required: true })
+  loginCount: number;
+
+  @prop({ required: true })
+  createdAt: Date;
+
+  @prop({ required: true })
+  updatedAt: Date;
+
+  constructor(
+    props: Omit<
+      Auth,
+      "createdAt" | "updatedAt" | "loginCount" | "mfaEnabled"
+    > & {
+      createdAt?: Date;
+      updatedAt?: Date;
+      loginCount?: number;
+      mfaEnabled?: boolean;
+    }
+  ) {
+    Object.assign(this, props);
+    this.mfaEnabled = props.mfaEnabled ?? false;
+    this.loginCount = props.loginCount ?? 0;
+    this.createdAt = props.createdAt ?? new Date();
+    this.updatedAt = props.updatedAt ?? new Date();
+  }
+}
+</file>
+
+<file path="src/plugins/db.ts">
+import fastifyMongo from "@fastify/mongodb";
+import fp from "fastify-plugin";
+
+export default fp(async (fastify) => {
+  fastify.register(fastifyMongo, {
+    forceClose: true,
+    url: process.env.MONGO_URL || "mongodb://mongo/mydb",
+  });
+});
+</file>
+
+<file path="src/routes/auth.ts">
+import { FastifyPluginAsync } from 'fastify'
+
+const auth: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+    fastify.get('/auth', async function (request, reply) {
+        return { auth: "kkkkkkkkkkkkkkkk" }
+    })
+}
+
+export default auth
+</file>
+
+<file path=".gitignore">
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules
+jspm_packages
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# 0x
+profile-*
+
+# mac files
+.DS_Store
+
+# vim swap files
+*.swp
+
+# webstorm
+.idea
+
+# vscode
+.vscode
+*code-workspace
+
+# clinic
+profile*
+*clinic*
+*flamegraph*
+
+# generated code
+examples/typescript-server.js
+test/types/index.js
+
+# compiled app
+dist
+</file>
+
+<file path="package.json">
+{
+  "name": "sniphub",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with Fastify-CLI.",
+  "main": "app.ts",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm run build:ts && tsc -p test/tsconfig.json && c8 node --test -r ts-node/register \"test/**/*.ts\"",
+    "start": "npm run build:ts && fastify start -l info dist/app.js",
+    "build:ts": "tsc",
+    "watch:ts": "tsc -w",
+    "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
+    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/autoload": "^6.0.0",
+    "@fastify/mongodb": "^9.0.2",
+    "@fastify/sensible": "^6.0.0",
+    "@typegoose/typegoose": "^12.19.0",
+    "dotenv": "^17.2.2",
+    "fastify": "^5.6.0",
+    "fastify-cli": "^7.4.0",
+    "fastify-plugin": "^5.0.1",
+    "mongoose": "^8.18.1",
+    "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.4",
+    "@types/node": "^22.18.1",
+    "c8": "^10.1.2",
+    "concurrently": "^9.0.0",
+    "fastify-tsconfig": "^3.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.8.2"
+  }
+}
+</file>
+
+<file path="README.md">
+# Getting Started with [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
+This project was bootstrapped with Fastify-CLI.
+
+## Available Scripts
+
+In the project directory, you can run:
+
+### `npm run dev`
+
+To start the app in dev mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+### `npm start`
+
+For production mode
+
+### `npm run test`
+
+Run the test cases.
+
+## Learn More
+
+To learn Fastify, check out the [Fastify documentation](https://fastify.dev/docs/latest/).
+</file>
+
+<file path="src/app.ts">
+import { join } from 'node:path'
+import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload'
+import { FastifyPluginAsync, FastifyServerOptions } from 'fastify'
+
+export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {
+
+}
+// Pass --options via CLI arguments in command to enable these options.
+const options: AppOptions = {
+}
+
+const app: FastifyPluginAsync<AppOptions> = async (
+  fastify,
+  opts
+): Promise<void> => {
+  // Place here your custom code!
+
+  // Do not touch the following lines
+
+  // This loads all plugins defined in plugins
+  // those should be support plugins that are reused
+  // through your application
+  // eslint-disable-next-line no-void
+  void fastify.register(AutoLoad, {
+    dir: join(__dirname, 'plugins'),
+    options: opts
+  })
+
+  // This loads all plugins defined in routes
+  // define your routes in one of these
+  // eslint-disable-next-line no-void
+  void fastify.register(AutoLoad, {
+    dir: join(__dirname, 'routes'),
+    options: opts
+  })
+}
+
+export default app
+export { app, options }
+</file>
+
+<file path="src/routes/root.ts">
+import { FastifyPluginAsync } from 'fastify'
+
+const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+  fastify.get('/', async function (request, reply) {
+    return { root: true }
+  })
+}
+
+export default root
+</file>
+
+<file path="test/helper.ts">
+// This file contains code that we reuse between our tests.
+import * as path from 'node:path'
+import * as test from 'node:test'
+const helper = require('fastify-cli/helper.js')
+
+export type TestContext = {
+  after: typeof test.after
+}
+
+const AppPath = path.join(__dirname, '..', 'src', 'app.ts')
+
+// Fill in this config with all the configurations
+// needed for testing the application
+function config () {
+  return {
+    skipOverride: true // Register our application with fastify-plugin
+  }
+}
+
+// Automatically build and tear down our instance
+async function build (t: TestContext) {
+  // you can set all the options supported by the fastify CLI command
+  const argv = [AppPath]
+
+  // fastify-plugin ensures that all decorators
+  // are exposed for testing purposes, this is
+  // different from the production setup
+  const app = await helper.build(argv, config())
+
+  // Tear down our app after we are done
+  // eslint-disable-next-line no-void
+  t.after(() => void app.close())
+
+  return app
+}
+
+export {
+  config,
+  build
+}
+</file>
+
+<file path="test/plugins/support.test.ts">
+import { test } from 'node:test'
+import * as assert from 'node:assert'
+
+import Fastify from 'fastify'
+import Support from '../../src/plugins/support'
+
+test('support works standalone', async (t) => {
+  const fastify = Fastify()
+  // eslint-disable-next-line no-void
+  void fastify.register(Support)
+  await fastify.ready()
+
+  assert.equal(fastify.someSupport(), 'hugs')
+})
+</file>
+
+<file path="test/routes/example.test.ts">
+import { test } from 'node:test'
+import * as assert from 'node:assert'
+import { build } from '../helper'
+
+test('example is loaded', async (t) => {
+  const app = await build(t)
+
+  const res = await app.inject({
+    url: '/example'
+  })
+
+  assert.equal(res.payload, 'this is an example')
+})
+</file>
+
+<file path="test/routes/root.test.ts">
+import { test } from 'node:test'
+import * as assert from 'node:assert'
+import { build } from '../helper'
+
+test('default root route', async (t) => {
+  const app = await build(t)
+
+  const res = await app.inject({
+    url: '/'
+  })
+  assert.deepStrictEqual(JSON.parse(res.payload), { root: true })
+})
+</file>
+
+<file path="test/tsconfig.json">
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true
+  },
+  "include": ["../src/**/*.ts", "**/*.ts"]
+}
+</file>
+
+<file path="tsconfig.json">
+{
+  "extends": "fastify-tsconfig",
+  "compilerOptions": {
+    "outDir": "dist",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*.ts"]
+}
+</file>
+
+</files>
